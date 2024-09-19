@@ -8,10 +8,6 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  permissions:
-  id-token: write
-  contents: read
-  attestations: write
   build_serial:
     strategy:
       matrix:
@@ -23,6 +19,10 @@ jobs:
           - os: macos-latest
             build_name: serial
     runs-on: ${{ matrix.platform.os }}
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
     steps:
       - uses: actions/checkout@v4
       - name: Build serial
@@ -38,6 +38,10 @@ jobs:
           if-no-files-found: error
   build_rootshell_and_rayhunter:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
