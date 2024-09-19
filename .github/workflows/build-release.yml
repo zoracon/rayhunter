@@ -8,6 +8,10 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  permissions:
+  id-token: write
+  contents: read
+  attestations: write
   build_serial:
     strategy:
       matrix:
@@ -19,15 +23,11 @@ jobs:
           - os: macos-latest
             build_name: serial
     runs-on: ${{ matrix.platform.os }}
-    permissions:
-      id-token: write
-      contents: read
-      attestations: write
     steps:
       - uses: actions/checkout@v4
       - name: Build serial
         run: cargo build --bin serial --release
-      - name: Attest
+      - name: Attest Serial
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: ./target/release/${{ matrix.platform.build_name }}
@@ -57,6 +57,10 @@ jobs:
           if-no-files-found: error
       - name: Build rayhunter-daemon (arm32)
         run: cargo build --bin rayhunter-daemon --target armv7-unknown-linux-gnueabihf --release
+      - name: Attest Rayhunter Daemon
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: target/armv7-unknown-linux-gnueabihf/release/rayhunter-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: rayhunter-daemon
