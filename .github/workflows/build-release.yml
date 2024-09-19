@@ -19,10 +19,18 @@ jobs:
           - os: macos-latest
             build_name: serial
     runs-on: ${{ matrix.platform.os }}
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
     steps:
       - uses: actions/checkout@v4
       - name: Build serial
         run: cargo build --bin serial --release
+      - name: Attest
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: ./target/release/${{ matrix.platform.build_name }}
       - uses: actions/upload-artifact@v4
         with:
           name: serial-${{ matrix.platform.os }}
